@@ -1,4 +1,4 @@
-// Last modified: 2013-10-24 13:38:04
+// Last modified: 2013-10-24 16:12:36
  
 /**
  * @file: unitries.c
@@ -170,13 +170,29 @@ void destruct_ut(struct node *root)
 	freenodes(root);
 }
 
+uint32_t match_forward(char *buf, uint64_t buf_len, uint64_t pos,
+		char *pattern, uint32_t plen, uint32_t i)
+{
+	uint64_t inc_buf = pos;
+	uint32_t inc_str = i;
+	uint32_t match = 0;
+	while (*(buf + inc_buf) == pattern[inc_str] &&
+			inc_buf < buf_len && inc_str < plen)
+	{
+		inc_buf++;
+		inc_str++;
+		match++;
+	}
+
+	return match;
+}
 struct factor *search_ut(char *buf, uint64_t buf_len,
 		struct node *root, char *pattern, uint32_t plen)
 {
 	struct factor *fac = (struct factor *)malloc(sizeof(struct factor));
 
-	uint32_t i = 0;;
-	uint64_t pos = 0, dep = 0, match = 0, inc_buf, inc_str;
+	uint32_t i = 0, match = 0;
+	uint64_t pos = 0, dep = 0;
 	while (i < plen)
 	{
 		dep = 0;
@@ -188,15 +204,7 @@ struct factor *search_ut(char *buf, uint64_t buf_len,
 		else if (root->flag[(uint8_t)pattern[i]] == 1)
 		{
 			pos = root->slot[(uint8_t)pattern[i]].pos;
-			inc_buf = pos;
-			inc_str = i;
-			while (*(buf + inc_buf) == pattern[inc_str] &&
-					inc_buf < buf_len && inc_str < plen)
-			{
-				inc_buf++;
-				inc_str++;
-				match++;
-			}
+			match = match_forward(buf, buf_len, pos, pattern, plen, i);
 		}
 		else // flag == 2
 		{
@@ -217,15 +225,7 @@ struct factor *search_ut(char *buf, uint64_t buf_len,
 			else // flag == 1
 			{
 				pos = tnode->slot[(uint8_t)pattern[i + dep]].pos;
-				inc_buf = pos;
-				inc_str = i;
-				while (*(buf + inc_buf) == pattern[inc_str] &&
-						inc_buf < buf_len && inc_str < plen)
-				{
-					inc_buf++;
-					inc_str++;
-					match++;
-				}
+				match = match_forward(buf, buf_len, pos, pattern, plen, i);
 			}
 		}
 		

@@ -1,4 +1,4 @@
-// Last modified: 2013-10-24 13:38:35
+// Last modified: 2013-10-24 16:08:58
  
 /**
  * @file: unitries.h
@@ -47,11 +47,14 @@ int32_t case_flag_2(struct node *tnode, uint64_t cur_pos, uint64_t cur_next_pos,
 
 struct node *construct_ut(char *buf, uint64_t buf_len);
 
-void destruct_ut(struct node *root);
+uint32_t match_forward(char *buf, uint64_t buf_len, uint64_t pos,
+		char *pattern, uint32_t plen, uint32_t i);
 
 struct factor *search_ut(char *buf, uint64_t buf_len,
 		struct node *root, char *pattern, uint32_t plen);
 
 void freenodes(struct node *layer);
+
+void destruct_ut(struct node *root);
  
 #endif
